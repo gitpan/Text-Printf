@@ -1,0 +1,24 @@
+Revision history for Perl extension Text::Printf
+
+0.01  2005 July 22
+    - First version, named Text::QuickTemplate.
+
+0.02  2005 July 24
+    - Uses Exception::Class for error handling now.
+    - More documentation on diagnostics.
+    - Much better test suite.
+
+0.03  2005 July 27
+    - Changed Makefile.PL to require v1.21 of Exception::Class.
+    - Fix some minor typos in the documentation.
+
+0.04  2005 August 24
+    - Added printf-like functions
+    - Added printf-like format specifications
+    - Added default() method.
+
+0.05  2005 September 8
+    - Added extended formatting codes (comma, dollar-sign).
+
+0.06  2005 December 6
+    - Renamed to Text::Printf.
