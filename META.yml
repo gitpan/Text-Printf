@@ -1,12 +1,12 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Text-Printf
-version:      0.06
-version_from: Printf.pm
-installdirs:  site
+---
+name: Text-Printf
+version: 0.07
+author:
+  - Eric Roode <roode@cpan.org>
+abstract: 'A simple, lightweight text fill-in class.'
+license: perl
 requires:
-    Exception::Class:              1.21
-    Readonly:                      1.00
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.17
+  Exception::Class: 1.21
+  Readonly: 1.00
+provides: {}
+generated_by: Module::Build version 0.2611

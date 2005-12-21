@@ -8,7 +8,7 @@ Text::Printf - A simple, lightweight text fill-in class.
 
 =head1 VERSION
 
-This documentation describes v0.06 of Text::Printf, December 6, 2005.
+This documentation describes v0.07 of Text::Printf, December 21, 2005.
 
 =cut
 
@@ -18,7 +18,7 @@ use strict;
 use warnings;
 use Readonly;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 Readonly our $DONTSET => [];    # Unique identifier
 
 # Always export the $DONTSET variable
@@ -206,15 +206,16 @@ sub new
         # $1 is the keyword plus its delimiters; $2 is the keyword by itself.
         # $3 is the printf format, if any; $4 is the extended format.
         $regex_for{$self} =
-            qr/(                                    # $1: capture whole expression
-                 $delimiters_for{$self}[0]          # Opening delimiter
-                 (\w+)                              # $2: keyword
-                 (?:  :                             # Maybe a colon and...
-                      %? (-? [\d.]* [A-Za-z]{1,2} ) #   $3: ...a printf format
-                      (?:   :                       #   and maybe another colon
-                            ([,\$]+) )?             #   $4: and extended format chars
+            qr/(                                         # $1: capture whole expression
+                 $delimiters_for{$self}[0]               # Opening delimiter
+                 (\w+)                                   # $2: keyword
+                 (?:  :                                  # Maybe a colon and...
+                      %? ( (?: \+ (?=[^+]{2}) )? [-<>]?  \+?
+                                 [\d.]* [A-Za-z]{1,2} )  #   $3: ...a printf format
+                      (?:   :                            #   and maybe another colon
+                            ([,\$]+) )?                  #   $4: and extended format chars
                  )?
-                 $delimiters_for{$self}[1]          # Closing delimiter
+                 $delimiters_for{$self}[1]               # Closing delimiter
               )/xsm;
 
         return;
@@ -332,6 +333,7 @@ sub new
             $value = q{}  if !defined $value;
             return $value if !defined $format;
 
+            $format =~ tr/<>/-/d;
             $value = sprintf "%$format", $value;
 
             # Special extended formatting
@@ -568,6 +570,26 @@ used, commas will be inserted every three positions to the left of the
 decimal point.  If a dollar-sign character is used, a dollar sign will
 be placed immediately to the left of the first digit of the number.
 
+A printf format may be preceeded by a C<-> sign to indicated that the
+string or number is to be left-justified within the field width.  The
+default is right-justification.  I personally have a hard time
+remembering that.  So instead of a minus sign, you can use a less-than
+sign C<E<lt>> to indicate left-justification, or a greater-than sign
+C<E<gt>> to indicate right-justification.
+
+So, to sum up, the following are examples of valid printf-style
+formats:
+
+     d        integer
+     x        hexadecimal
+    5d        integer, right-justified, minimum 5 positions
+   -5d        integer, left-justified, minimum 5 positions
+   <5d        Same
+   >5d        Same, only right-justified
+   .2f        floating-point, two decimal places
+   .10s       string, maximum 10 positions
+   10.10s     string, exactly 10 positions, right-justified
+   <10.10s    string, exactly 10 positions, left-justified
 
 =head1 COMMON MISTAKE
 
@@ -581,6 +603,7 @@ so that a non-placeholder does not get expanded by mistake.
  Right: {{pi:%.9f}}
  Wrong: {{ lemon }}
  Wrong: {{lemon pie}}
+ Right: {{lemon_pie}}
  Wrong: {{pi: %.9f}}
 
 Text::Printf will silently leave incorrectly-formatted placeholders

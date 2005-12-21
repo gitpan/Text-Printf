@@ -1,4 +1,4 @@
-Text::Printf version 0.06
+Text::Printf version 0.07
 =========================
 
 This module provides a simple, lightweight templating mechanism. This
@@ -61,7 +61,14 @@ INSTALLATION
 
 To install this module, do the standard Perl module four-step:
 
-   perl Makefile.PL    or    perl Makefile.pl LIB='my/install/path'
+   perl Build.PL       or    perl Build.PL --install_path lib=...
+   ./Build
+   ./Build test
+   ./Build install   or   ./Build install --options
+
+The old-fashioned Makefile.PL way works, too:
+
+   perl Makefile.PL    or    perl Makefile.PL LIB='my/install/path'
    make
    make test
    make install
