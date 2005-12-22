@@ -570,25 +570,26 @@ used, commas will be inserted every three positions to the left of the
 decimal point.  If a dollar-sign character is used, a dollar sign will
 be placed immediately to the left of the first digit of the number.
 
-A printf format may be preceeded by a C<-> sign to indicated that the
-string or number is to be left-justified within the field width.  The
-default is right-justification.  I personally have a hard time
-remembering that.  So instead of a minus sign, you can use a less-than
-sign C<E<lt>> to indicate left-justification, or a greater-than sign
-C<E<gt>> to indicate right-justification.
+A printf format may be preceeded by a "C<->" sign to indicated that
+the string or number is to be left-justified within the field width.
+The default is right-justification.  (This is how all C<printf>s work)
+I personally have a hard time remembering that.  So instead of a minus
+sign, you can use a less-than sign ("C<E<lt>>") to indicate left-
+justification, or a greater-than sign ("C<E<gt>>") to indicate
+right-justification.
 
 So, to sum up, the following are examples of valid printf-style
 formats:
 
-     d        integer
-     x        hexadecimal
-    5d        integer, right-justified, minimum 5 positions
-   -5d        integer, left-justified, minimum 5 positions
-   <5d        Same
-   >5d        Same, only right-justified
-   .2f        floating-point, two decimal places
-   .10s       string, maximum 10 positions
-   10.10s     string, exactly 10 positions, right-justified
+         d    integer
+         x    hexadecimal
+        5d    integer, right-justified, minimum 5 positions
+       -5d    integer, left-justified, minimum 5 positions
+       <5d    Same
+       >5d    Same, only right-justified
+       .2f    floating-point, two decimal places
+      .10s    string, maximum 10 positions
+    10.10s    string, exactly 10 positions, right-justified
    <10.10s    string, exactly 10 positions, left-justified
 
 =head1 COMMON MISTAKE
@@ -899,9 +900,9 @@ under the same terms as Perl itself.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (Cygwin)
 
-iD8DBQFDld6YY96i4h5M0egRAveZAKDRxnfGrVpRBQj9n3fxkZhzw3MaswCfWmdy
-n+ZcLKQK/NaPaztYs/AITh8=
-=U/aj
+iD8DBQFDqsE+Y96i4h5M0egRAgzXAJ9Gc6tCj3jh6t3mnjcUIidbQGpt0QCeIc7I
+cKUL4iE5o46X2ub1nYftQRI=
+=kp6r
 -----END PGP SIGNATURE-----
 
 =end gpg
