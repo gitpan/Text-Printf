@@ -1,8 +1,13 @@
+Build.PL
 Changes
-Makefile.PL
 MANIFEST
-Printf.pm
+MANIFEST.SKIP
+META.yml
+Makefile.PL
+lib/Text/Printf.pm
 README
+SIGNATURE
+t/0-signature.t
 t/default.t
 t/doc.t
 t/fill.t
@@ -10,4 +15,4 @@ t/format.t
 t/new.t
 t/prefill.t
 t/printf.t
-META.yml
+SIGNATURE    Added here by Module::Build

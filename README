@@ -1,4 +1,4 @@
-Text::Printf version 0.07
+Text::Printf version 0.08
 =========================
 
 This module provides a simple, lightweight templating mechanism. This
@@ -12,6 +12,7 @@ a templated version of sprintf:
 
     $str = tsprintf '2 {{fruit}} + 3 {{fruit}} = 5 {{fruit}}',
                      {fruit => 'apples'};
+    # Result: "2 apples + 3 apples = 5 apples"
 
 The other way is to create a Text::Printf object with a string of
 boilerplate text.  Then later, you pass the object a hash of
@@ -46,33 +47,23 @@ That's it.  No control flow, no executable content, no filesystem
 access.  Never had it, never will.
 
 
-DEVELOPMENT STATE
-
-This is a brand-new module, so be wary.  It has a decent test suite,
-but it hasn't been extensively field-tested.  It should be considered
-"beta" software.
-
-If you find any bugs, or if any behavior of Text::Printf surprises
-you, I would be grateful if you could send me an email message about
-it.  Thanks.
-
-
 INSTALLATION
 
-To install this module, do the standard Perl module four-step:
+To install this module, use the following four commands:
 
    perl Build.PL       or    perl Build.PL --install_path lib=...
    ./Build
    ./Build test
    ./Build install   or   ./Build install --options
 
-The old-fashioned Makefile.PL way works, too:
+If you do not have Module::Build, use the old-style installation:
 
    perl Makefile.PL    or    perl Makefile.PL LIB='my/install/path'
    make
    make test
    make install
 
+On Windows, you will need to use 'nmake' instead of 'make'.
 
 DEPENDENCIES
 
@@ -87,10 +78,14 @@ COPYRIGHT AND LICENSE
 
 Eric J. Roode, roode@cpan.org
 
-Copyright (c) 2005 by Eric J. Roode. All Rights Reserved.
+Copyright (c) 2005-2008 by Eric J. Roode. All Rights Reserved.
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 To avoid my spam filter, please include "Perl", "module", or this
 module's name in the message's subject line, and/or GPG-sign your
 message.
+
+If you find any bugs, or if any behavior of Text::Printf surprises
+you, I would be grateful if you could send me an email message about
+it.  Thanks.

@@ -8,7 +8,7 @@ Text::Printf - A simple, lightweight text fill-in class.
 
 =head1 VERSION
 
-This documentation describes v0.07 of Text::Printf, December 21, 2005.
+This documentation describes v0.08 of Text::Printf, March 24, 2008.
 
 =cut
 
@@ -18,8 +18,8 @@ use strict;
 use warnings;
 use Readonly;
 
-our $VERSION = '0.07';
-Readonly our $DONTSET => [];    # Unique identifier
+our $VERSION = '0.08';
+Readonly::Scalar our $DONTSET => [];    # Unique identifier
 
 # Always export the $DONTSET variable
 # Always export the *printf subroutines
@@ -153,7 +153,7 @@ sub new
             push @occupied, '%bad_keys_of'       if exists $bad_keys_of     {$self};
 
             Text::Printf::X::InternalError->throw(
-                message         => "Internal programing error: contact author.",
+                message         => 'Internal programing error: contact author.',
                 additional_info => join(', ', @occupied))
                 if @occupied;
         }
@@ -885,24 +885,38 @@ circumstances of the error.
 
 =head1 AUTHOR / COPYRIGHT
 
-Eric J. Roode, roode@cpan.org
+Copyright (c) 2005-2008 by Eric J. Roode, ROODE I<-at-> cpan I<-dot-> org
+
+All rights reserved.
 
 To avoid my spam filter, please include "Perl", "module", or this
 module's name in the message's subject line, and/or GPG-sign your
 message.
 
-Copyright (c) 2005 by Eric J. Roode. All Rights Reserved.
-This module is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+This module is copyrighted only to ensure proper attribution of
+authorship and to ensure that it remains available to all.  This
+module is free, open-source software.  This module may be freely used
+for any purpose, commercial, public, or private, provided that proper
+credit is given, and that no more-restrictive license is applied to
+derivative (not dependent) works.
+
+Substantial efforts have been made to ensure that this software meets
+high quality standards; however, no guarantee can be made that there
+are no undiscovered bugs, and no warranty is made as to suitability to
+any given use, including merchantability.  Should this module cause
+your house to burn down, your dog to collapse, your heart-lung machine
+to fail, your spouse to desert you, or George Bush to be re-elected, I
+can offer only my sincere sympathy and apologies, and promise to
+endeavor to improve the software.
 
 =begin gpg
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (Cygwin)
+Version: GnuPG v1.4.5 (Cygwin)
 
-iD8DBQFDqsE+Y96i4h5M0egRAgzXAJ9Gc6tCj3jh6t3mnjcUIidbQGpt0QCeIc7I
-cKUL4iE5o46X2ub1nYftQRI=
-=kp6r
+iD8DBQFH6Gd8woSYc5qQVqoRAt8NAKCgYTUHKTMYOuFOfzi58ZB2XlERvACgjNXs
++thCwLfm5v/mF/pvkNv+m4U=
+=LEKI
 -----END PGP SIGNATURE-----
 
 =end gpg

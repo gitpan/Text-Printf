@@ -3,12 +3,14 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'Text::Printf',
-    'VERSION_FROM'	=> 'Printf.pm', # finds $VERSION
+    'VERSION_FROM'	=> 'lib/Text/Printf.pm', # finds $VERSION
     'PREREQ_PM'		=> { # module_name    => version
-                            Readonly          => '1.00',
-                            Exception::Class  => '1.21',
+                            'Readonly'            => '1.00',
+                            'Exception::Class'    => '1.21',
+                            'ExtUtils::MakeMaker' => '6.25',
                            },
+    (MM->can('signature_target')? (SIGN => 1) : ()),
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM => 'Printf.pm', # retrieve abstract from module
+      (ABSTRACT_FROM => 'lib/Text/Printf.pm', # retrieve abstract from module
        AUTHOR     => 'Eric Roode <roode@cpan.org>') : ()),
 );
