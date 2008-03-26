@@ -12,7 +12,9 @@ t/default.t
 t/doc.t
 t/fill.t
 t/format.t
+t/misc.t
 t/new.t
 t/prefill.t
 t/printf.t
+SIGNATURE
 SIGNATURE    Added here by Module::Build

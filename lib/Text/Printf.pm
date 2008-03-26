@@ -8,7 +8,7 @@ Text::Printf - A simple, lightweight text fill-in class.
 
 =head1 VERSION
 
-This documentation describes v0.08 of Text::Printf, March 24, 2008.
+This documentation describes version 1.00 of Text::Printf, March 26, 2008.
 
 =cut
 
@@ -18,8 +18,9 @@ use strict;
 use warnings;
 use Readonly;
 
-our $VERSION = '0.08';
-Readonly::Scalar our $DONTSET => [];    # Unique identifier
+$Text::Printf::VERSION = '1.00';
+use vars '$DONTSET';
+Readonly::Scalar $DONTSET => [];    # Unique identifier
 
 # Always export the $DONTSET variable
 # Always export the *printf subroutines
@@ -268,8 +269,8 @@ sub new
     sub clear_values
     {
         my $self = shift;
-        @{ $value_hashes_for{$self} } = [];
-        @{ $defaults_for    {$self} } = [];
+        $value_hashes_for{$self} = [];
+        $defaults_for    {$self} = [];
         return;
     }
 
@@ -912,11 +913,11 @@ endeavor to improve the software.
 =begin gpg
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.5 (Cygwin)
+Version: GnuPG v1.4.8 (Cygwin)
 
-iD8DBQFH6Gd8woSYc5qQVqoRAt8NAKCgYTUHKTMYOuFOfzi58ZB2XlERvACgjNXs
-+thCwLfm5v/mF/pvkNv+m4U=
-=LEKI
+iEYEARECAAYFAkfqliMACgkQwoSYc5qQVqq2tACgjUHNTB+UP/xyJd0x/+PHpPKW
+jq8An1RCT8vHKO7BO2/SPIlWFIpDQ9TH
+=VdwJ
 -----END PGP SIGNATURE-----
 
 =end gpg

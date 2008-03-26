@@ -1,5 +1,5 @@
 use strict;
-use Test::More tests => 28;
+use Test::More tests => 34;
 use Text::Printf;
 
 # Test printf-like functions.
@@ -12,6 +12,16 @@ sub begins_with
     @_ =  ($actual, $expected, $test_name);
     goto &is;
 }
+
+# ----------------------------------------------------------------
+# Package for testing print to an object
+package TempPrintObjectThingy;
+sub new   { bless {} => shift }
+sub print { $_[0]{print} = $_[1] }
+sub fetch { $_[0]{print} }
+package main;
+# ----------------------------------------------------------------
+my $thingy = new TempPrintObjectThingy;
 
 my ($template, $letter, $x);
 
@@ -30,6 +40,22 @@ ok(Text::Printf::X::ParameterError->caught(),  q{No-args printf exception is of 
 begins_with $x,
     q{tprintf() requires at least one argument},
     q{No-args printf exception works as a string, too};
+
+# tprintf with only filehandle arg (4)
+eval
+{
+    $letter = tprintf(\*STDOUT);
+};
+$x = $@;
+isnt $x, q{},   q{Only filehandle arg to tprintf};
+
+ok(Text::Printf::X->caught(), q{One-arg printf exception caught});
+
+ok(Text::Printf::X::ParameterError->caught(),  q{One-arg printf exception is of proper type});
+
+begins_with $x,
+    q{tprintf() requires at least one non-handle argument},
+    q{One-arg printf exception works as a string, too};
 
 # tsprintf with no args (4)
 eval
@@ -116,6 +142,34 @@ begins_with $x,
 undef $letter;
 eval
 {
+    tprintf $thingy, <<END_TEMPLATE,
+Dear {{to}},
+    Have a {{day_type}} day.
+Your {{relation}},
+{{from}}
+END_TEMPLATE
+    {to       => 'Lord Voldemort',
+     from     => 'Harry',
+     day_type => 'supercalifragilisticexpialidocious',
+     relation => 'sworn enemy'};
+};
+
+$x = $@;
+is $x, q{},   q{Normal (to object)};
+
+$letter = $thingy->fetch;
+
+is $letter, <<END_LETTER, q{to object, returned correct result};
+Dear Lord Voldemort,
+    Have a supercalifragilisticexpialidocious day.
+Your sworn enemy,
+Harry
+END_LETTER
+
+
+undef $letter;
+eval
+{
     $letter = tsprintf <<END_TEMPLATE,
 Dear {{to}},
     Have a {{day_type}} day.
@@ -131,7 +185,7 @@ END_TEMPLATE
 $x = $@;
 is $x, q{},   q{Normal (multiple hashrefs)};
 
-is $letter, <<END_LETTER, q{Multiple hashrefs reurned correct result};
+is $letter, <<END_LETTER, q{Multiple hashrefs returned correct result};
 Dear Lord Voldemort,
     Have a supercalifragilisticexpialidocious day.
 Your sworn enemy,

@@ -1,6 +1,6 @@
 ---
 name: Text-Printf
-version: 0.08
+version: 1.00
 author:
   - 'Eric J. Roode <roode@cpan.org>'
 abstract: 'A simple, lightweight text fill-in class.'
@@ -12,8 +12,8 @@ build_requires:
 provides:
   Text::Printf:
     file: lib/Text/Printf.pm
-    version: 0.08
-generated_by: Module::Build version 0.2805
+    version: 1.00
+generated_by: Module::Build version 0.2807
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
   version: 1.2

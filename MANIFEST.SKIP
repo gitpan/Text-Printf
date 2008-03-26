@@ -11,3 +11,4 @@
 \.tar\.gz$
 ^pod.*tmp$
 ^\.cvsignore$
+^cover_db/
