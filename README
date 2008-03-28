@@ -1,4 +1,4 @@
-Text::Printf version 1.00
+Text::Printf version 1.01
 =========================
 
 This module provides a simple, lightweight templating mechanism. This
@@ -79,10 +79,9 @@ COPYRIGHT AND LICENSE
 
 Eric J. Roode, roode @ cpan . org
 
-Copyright (c) 2005-2008 by Eric J. Roode. All Rights Reserved.
-This module is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.  See copyright statement in the
-module documentation.
+Copyright (c) 2005-2008 by Eric J. Roode. All Rights Reserved.  This
+module is free software; you can use it and/or redistribute it freely.
+See copyright statement in the module documentation.
 
 To avoid my spam filter, please include "Perl", "module", or this
 module's name in the message's subject line, and/or GPG-sign your

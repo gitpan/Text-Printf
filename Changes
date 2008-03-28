@@ -34,3 +34,6 @@ Revision history for Perl extension Text::Printf
 1.00  2008 March 26
     - Fixed syntax for perls earlier than 5.6 ("our" not okay)
     - Added some test cases suggested by Devel::Cover.
+
+1.01  2008 March 28
+    - Changed doc.t's open() syntax to work with older Perls.

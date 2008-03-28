@@ -12,8 +12,8 @@ my $builder = Module::Build->new(
                        'Readonly'           => '1.00',
                        'Exception::Class'   => '1.21',
                       },
-    sign => 1,
     add_to_cleanup      => [ 'Text-Printf-*' ],
+    sign => 1,
 );
 
 $builder->create_build_script();

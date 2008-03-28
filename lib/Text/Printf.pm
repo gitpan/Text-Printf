@@ -8,7 +8,7 @@ Text::Printf - A simple, lightweight text fill-in class.
 
 =head1 VERSION
 
-This documentation describes version 1.00 of Text::Printf, March 26, 2008.
+This documentation describes version 1.01 of Text::Printf, March 28, 2008.
 
 =cut
 
@@ -18,7 +18,7 @@ use strict;
 use warnings;
 use Readonly;
 
-$Text::Printf::VERSION = '1.00';
+$Text::Printf::VERSION = '1.01';
 use vars '$DONTSET';
 Readonly::Scalar $DONTSET => [];    # Unique identifier
 
@@ -915,9 +915,9 @@ endeavor to improve the software.
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.8 (Cygwin)
 
-iEYEARECAAYFAkfqliMACgkQwoSYc5qQVqq2tACgjUHNTB+UP/xyJd0x/+PHpPKW
-jq8An1RCT8vHKO7BO2/SPIlWFIpDQ9TH
-=VdwJ
+iEYEARECAAYFAkftNXQACgkQwoSYc5qQVqo2WQCfQGVpR0+Ws944PUhYbtNW7o/G
+gOYAoIeURAqvHvaj/N2E0Ew1pLvsu8x8
+=klQw
 -----END PGP SIGNATURE-----
 
 =end gpg

@@ -133,8 +133,8 @@ my ($fh1, $fh2, $report_line, $line);
 eval
 {
     $report_line = Text::Printf->new('{{Name:-20s}} {{Grade:10d}}');
-    open $fh1, '>', 'fh1' or die "Can't write 'fh1': $!";
-    open $fh2, '>', 'fh2' or die "Can't write 'fh2': $!";
+    open $fh1, '>fh1' or die "Can't write 'fh1': $!";
+    open $fh2, '>fh2' or die "Can't write 'fh2': $!";
     select $fh1;
 };
 
@@ -168,8 +168,8 @@ eval
     close $fh2 or die;
     undef $fh1;
     undef $fh2;
-    open $fh1, '<', 'fh1' or die "Can't read 'fh1': $!";
-    open $fh2, '<', 'fh2' or die "Can't read 'fh2': $!";
+    open $fh1, '<fh1' or die "Can't read 'fh1': $!";
+    open $fh2, '<fh2' or die "Can't read 'fh2': $!";
 
     local $/ = undef;
     $str1 = <$fh1>;
