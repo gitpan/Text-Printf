@@ -37,3 +37,6 @@ Revision history for Perl extension Text::Printf
 
 1.01  2008 March 28
     - Changed doc.t's open() syntax to work with older Perls.
+
+1.02  2008 March 31
+    - Add Readonly and Exception::Class to Makefile.PL.

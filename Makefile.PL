@@ -5,7 +5,9 @@ WriteMakefile(
     'NAME'		=> 'Text::Printf',
     'VERSION_FROM'	=> 'lib/Text/Printf.pm', # finds $VERSION
     'PREREQ_PM'		=> {
-                            'Test::Simple' => '0.40',
+                            'Test::Simple'       => '0.40',
+                            'Readonly'           => '1.00',
+                            'Exception::Class'   => '1.21',
                            },
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => 'lib/Text/Printf.pm', # retrieve abstract from module

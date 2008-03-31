@@ -1,4 +1,4 @@
-Text::Printf version 1.01
+Text::Printf version 1.02
 =========================
 
 This module provides a simple, lightweight templating mechanism. This

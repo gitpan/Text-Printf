@@ -8,7 +8,7 @@ my $builder = Module::Build->new(
     dist_author         => 'Eric J. Roode <roode@cpan.org>',
     dist_version_from   => 'lib/Text/Printf.pm',
     build_requires => {
-                       'Test::More'         => '0.10',
+                       'Test::Simple'       => '0.40',
                        'Readonly'           => '1.00',
                        'Exception::Class'   => '1.21',
                       },
