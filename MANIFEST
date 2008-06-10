@@ -16,4 +16,6 @@ t/misc.t
 t/new.t
 t/prefill.t
 t/printf.t
+t/text.t
+SIGNATURE    Added here by Module::Build
 SIGNATURE    Added here by Module::Build

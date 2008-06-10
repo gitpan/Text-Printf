@@ -8,7 +8,7 @@ Text::Printf - A simple, lightweight text fill-in class.
 
 =head1 VERSION
 
-This documentation describes version 1.02 of Text::Printf, March 31, 2008.
+This documentation describes version 1.03 of Text::Printf, June 9, 2008.
 
 =cut
 
@@ -18,7 +18,7 @@ use strict;
 use warnings;
 use Readonly;
 
-$Text::Printf::VERSION = '1.02';
+$Text::Printf::VERSION = '1.03';
 use vars '$DONTSET';
 Readonly::Scalar $DONTSET => [];    # Unique identifier
 
@@ -52,6 +52,10 @@ use Exception::Class
         { isa         => 'Text::Printf::X',
           fields      => 'symbols',
           description => 'Could not resolve one or more symbols in template text',
+        },
+    'Text::Printf::X::NoText' =>
+        { isa         => 'Text::Printf::X',
+          description => 'No text to expand',
         },
     'Text::Printf::X::InternalError' =>
         { isa         => 'Text::Printf::X',
@@ -160,16 +164,67 @@ sub new
         }
 
         # Check number and type of parameters
+        # Legal possibilities:  (), ($scalar), ($hashref), ($scalar, $hashref);
         my $whoami = ref($self) . " constructor";
-        Text::Printf::X::ParameterError->throw("Second argument to $whoami must be hash reference")
-            if @_ == 2  &&  ref($_[1]) ne 'HASH';
-        Text::Printf::X::ParameterError->throw("Too many parameters to $whoami")
-            if @_ > 2;
-        Text::Printf::X::ParameterError->throw("Missing boilerplate text parameter to $whoami")
-            if @_ == 0;
 
-        my $boilerplate = shift;
-        my $options_ref = shift || {};
+        my $boilerplate;
+        my $options_ref;
+
+        if (@_ == 1)
+        {
+            my $arg = shift;
+            Text::Printf::X::ParameterError->throw('Text may not be set to an undefined value')
+                if !defined $arg;
+
+            my $ref = ref $arg;
+            if ($ref eq '')
+            {
+                $boilerplate = $arg;
+            }
+            elsif ($ref eq 'HASH')
+            {
+                $options_ref = $arg;
+            }
+            else
+            {
+                $ref = _decode_ref($arg);
+                Text::Printf::X::ParameterError->throw(
+                    "Solo argument to $whoami should be scalar or hashref, not $ref");
+            }
+        }
+        elsif (@_ == 2)
+        {
+            my $arg = shift;
+            Text::Printf::X::ParameterError->throw('Text may not be set to an undefined value')
+                if !defined $arg;
+
+            my $ref = ref $arg;
+            if ($ref eq '')
+            {
+                $boilerplate = $arg;
+            }
+            else
+            {
+                $ref = _decode_ref($arg);
+                Text::Printf::X::ParameterError->throw(
+                    "First argument to $whoami should be a scalar, not $ref");
+            }
+
+            $arg = shift;
+            $ref = ref($arg);
+            if ($ref ne 'HASH')
+            {
+                $ref = _decode_ref($arg);
+                Text::Printf::X::ParameterError->throw(
+                    "Second argument to $whoami must be hash ref, not $ref");
+            }
+            $options_ref = $arg;
+        }
+        elsif (@_ > 2)
+        {
+            Text::Printf::X::ParameterError->throw("Too many parameters to $whoami");
+        }
+
 
         $boilerplate_for{$self} = $boilerplate;
         if (exists $options_ref->{delimiters})
@@ -188,7 +243,7 @@ sub new
                 name => 'delimiter')
                 unless @$delim == 2;
 
-            my ($ref0, $ref1) = (ref ($delim->[0]), ref($delim->[1]));
+            my ($ref0, $ref1) = (ref ($delim->[0]), ref ($delim->[1]));
             Text::Printf::X::OptionError->throw(
                 message => "Bad option to $whoami\n"
                            . "delimiter values must be strings or regexes",
@@ -274,6 +329,25 @@ sub new
         return;
     }
 
+    # Set or change the boilerplate (template) text
+    sub text
+    {
+        my $self = shift;
+
+        # No arguments?  Return the text.
+        return $boilerplate_for{$self}
+              unless @_;
+
+        my $text = shift;
+        Text::Printf::X::ParameterError->throw('Too many parameters to text()')
+              if @_;
+        Text::Printf::X::ParameterError->throw('Text may not be set to an undefined value')
+              if !defined $text;
+
+        $boilerplate_for{$self} = $text;
+        return;
+    }
+
     # Do the replacements.
     sub fill
     {
@@ -283,7 +357,7 @@ sub new
         # Validate the parameters
         foreach my $arg (@fill_hashes)
         {
-            Text::Printf::X::ParameterError->throw("Argument to fill() is not a hashref")
+            Text::Printf::X::ParameterError->throw('Argument to fill() is not a hashref')
                 if ref $arg ne 'HASH';
         }
 
@@ -294,6 +368,7 @@ sub new
 
         # Fetch other attributes
         my $str = $boilerplate_for{$self};
+        defined $str or Text::Printf::X::NoText->throw('Template text was never set');
         my $rex = $regex_for{$self};
 
         # Do the subsitution
@@ -462,6 +537,13 @@ sub t_printf_guts
     return $template->fill(@value_hashes);
 }
 
+sub _decode_ref
+{
+    my $ref = ref $_[0];
+    return $ref eq '' ? 'scalar'
+         : $ref . ' ref';
+}
+
 1;
 __END__
 
@@ -481,6 +563,9 @@ Prepared-template usage:
 
  # Create a template:
  $template = Text::Printf->new($format, \%options);
+
+ # Set (or change) the template text:
+ $template->text($format);
 
  # Set default values:
  $template->default(\%values);
@@ -527,15 +612,15 @@ substituted into the original boilerplate text.  The special value
 C<$DONTSET> indicates that the keyword (and its delimiters) are to
 remain in the boilerplate text, unsubstituted.
 
-That's it.  No control flow, no executable content, no filesystem
+That's it.  No flow control, no executable content, no filesystem
 access.  Never had it, never will.
 
 =head1 TEMPLATE FORMAT
 
 When you create a template object, or when you use one of the
-printf-like functions, you must supply a I<template>, which is a
-string that contains I<placeholders> that will be filled in later (by
-the L</fill> method).  All other text in the template will remain
+printf-like functions, you supply a I<template>, which is a string
+that contains I<placeholders> that will be filled in later (by the
+L</fill> method).  All other text in the template will remain
 undisturbed, as-is, unchanged.
 
 I<Examples:>
@@ -579,8 +664,7 @@ sign, you can use a less-than sign ("C<E<lt>>") to indicate left-
 justification, or a greater-than sign ("C<E<gt>>") to indicate
 right-justification.
 
-So, to sum up, the following are examples of valid printf-style
-formats:
+To sum up, the following are examples of valid printf-style formats:
 
          d    integer
          x    hexadecimal
@@ -612,7 +696,7 @@ Text::Printf will silently leave incorrectly-formatted placeholders
 alone.  This is in case you are generating code; you don't want
 something like
 
- sub foo {{bar => 1}};
+ sub foo {{$_[0] => 1}};
 
 to be mangled or to generate errors.
 
@@ -626,12 +710,25 @@ Constructor.
 
  $template_object = Text::Printf->new($boilerplate, \%options);
 
-Creates a new Text::Printf object.  The boilerplate text string
-parameter is mandatory; the hashref of options is optional.
+Creates a new Text::Printf object.  Both parameters are optional.
 
-Currently, the only option permitted is C<delimiters>, which is a
-reference to an array of two strings (or compiled regular expresions):
-a starting delimiter and an ending delimiter.
+The C<boilerplate> parameter specifies the template pattern that is to
+be printed; presumably it has placeholders to be filled in later.  If
+you do not specify it here in the constructor, you must specify it via
+the L</text> method before you call L</fill>.
+
+The C<options> parameter specifies options to control how the object
+behaves.  Currently, the only option permitted is C<delimiters>, which
+is a reference to an array of two strings (or compiled regular
+expresions): a starting delimiter and an ending delimiter.
+
+=item text
+
+ $template->text($boilerplate);
+
+Sets the template pattern text that will be printed (presumably it has
+placeholders to be filled in later).  It is an error to pass C<undef>
+to this method or to omit the C<boilerplate> argument.
 
 =item fill
 
@@ -665,8 +762,9 @@ L</fill> method in addition to (and higher priority than) the ones
 passed to L</fill>.
 
 This can be useful if some template values are set when the template
-is created, but the template is filled elsewhere in the program, and
-you don't want to pass variables around.
+is created, but the template is filled elsewhere in your program, and
+you don't want to pass variables around.  It is also useful if
+different parts of your program fill different parts of the template.
 
 =item default
 
@@ -682,7 +780,7 @@ used if the call to L</fill> (or L</pre_fill>) don't override them.
 
 =item clear_values
 
-Clear default and pre-filled values.
+Clear all default and pre-filled values.
 
  $template->clear_values();
 
@@ -719,7 +817,8 @@ default filehandle.
 
 The original inspiration for this module came as the author was
 scanning through a long and complex list of arguments to a printf
-template, and lost track of which value when into which position.
+template, and kept losing track of which value went into which
+position.
 
 =item tsprintf
 
@@ -788,7 +887,6 @@ This module is dependent upon the following other CPAN modules:
  Readonly
  Exception::Class
 
-
 =head1 DIAGNOSTICS
 
 Text::Printf uses L<Exception::Class> objects for throwing exceptions.
@@ -846,6 +944,14 @@ much use in handling this sort of exception.
 
 As a string, this exception provides a human-readable message about
 what the problem was.
+
+=item * Failure to set template text
+
+Class: C<Text::Printf::X::NoText>
+
+You created a template object with no template text, and you never
+subsequently called the L</text> method to set the template text,
+and you called L</fill> to render the text.
 
 =item * Option errors
 
@@ -913,11 +1019,11 @@ endeavor to improve the software.
 =begin gpg
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.8 (Cygwin)
+Version: GnuPG v1.4.9 (Cygwin)
 
-iEYEARECAAYFAkfw8uUACgkQwoSYc5qQVqr2bwCeJU57odUslw8VAWCX90EjJoWt
-/SUAn3cC7PSWzsQxn76ypJgaSyZ97EiJ
-=qQ0A
+iEYEARECAAYFAkhNwvIACgkQwoSYc5qQVqouUQCdFaj/sTSvQpaiGX85zznYGd6m
+7xkAn2cVvf5xay/mV04TiqAXlCVoq1IT
+=xQ2H
 -----END PGP SIGNATURE-----
 
 =end gpg

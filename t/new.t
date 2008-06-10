@@ -1,5 +1,5 @@
 use strict;
-use Test::More tests => 51;
+use Test::More tests => 52;
 use Text::Printf;
 
 # Check that new() fails when it should.
@@ -33,49 +33,47 @@ ok (Text::Printf::X->caught(), q{Bad-arg exception caught});
 ok (Text::Printf::X::ParameterError->caught(),  q{Bad-arg exception is of proper type});
 
 begins_with $x,
-    "Second argument to Text::Printf constructor must be hash reference",
+    "Second argument to Text::Printf constructor must be hash ref, not scalar",
     "Bad-arg exception works as a string, too";
 
 
+#----------------------------------------------------------------
 eval
 {
-    $template = Text::Printf->new(<<END_TEMPLATE, {a=>1}, 'burp');
-Dear {{to}},
-    Have a {{day_type}} day.
-Your {{relation}},
-{{from}}
-END_TEMPLATE
+    $template = Text::Printf->new({a=>1}, 'burp');
+};
+
+$x = $@;
+isnt $x, q{},   q{Out-of-order arguments to 'new'};
+
+ok(Text::Printf::X->caught(), q{Out-of-order exception caught});
+
+ok(Text::Printf::X::ParameterError->caught(),  q{Out-of-order exception is of proper type});
+
+begins_with $x,
+    'First argument to Text::Printf constructor should be a scalar, not HASH ref',
+    'Out-of-order exception works as a string, too';
+
+
+#----------------------------------------------------------------
+eval
+{
+    $template = Text::Printf->new('whee', 'oops', 'burp');
 };
 
 $x = $@;
 isnt $x, q{},   q{Too many arguments to 'new'};
 
-ok(Text::Printf::X->caught(), q{Too-many exception caught});
+ok(Text::Printf::X->caught(), q{Too many exception caught});
 
 ok(Text::Printf::X::ParameterError->caught(),  q{Too-many exception is of proper type});
 
 begins_with $x,
-    "Too many parameters to Text::Printf constructor",
-    "Too-many exception works as a string, too";
+    'Too many parameters to Text::Printf constructor',
+    'Too-many exception works as a string, too';
 
 
-eval
-{
-    $template = Text::Printf->new();
-};
-
-$x = $@;
-isnt $x, q{},   q{Missing argument to 'new'};
-
-ok(Text::Printf::X->caught(), q{Missing arg exception caught});
-
-ok(Text::Printf::X::ParameterError->caught(),  q{Missing arg exception is of proper type});
-
-begins_with $x,
-    "Missing boilerplate text parameter to Text::Printf constructor",
-    "Missing arg exception works as a string, too";
-
-
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => q{}});
@@ -88,13 +86,14 @@ ok(Text::Printf::X->caught(), q{Bad delimiter option exception caught});
 
 ok(Text::Printf::X::OptionError->caught(),  q{Bad delimiter exception is of proper type});
 
-is $x->name(), 'delimiter',  q{Bad option name specified (bad type)};
+is +($x && $x->name), 'delimiter',  q{Bad option name specified (bad type)};
 
 begins_with $x,
     "Bad option to Text::Printf constructor\ndelimiter value must be array reference",
     "Bad delimiter option exception works as a string, too";
 
 
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => []});
@@ -113,6 +112,7 @@ begins_with $x,
     "Bad option to Text::Printf constructor\ndelimiter arrayref must have exactly two values",
     "Wrong# delimiters exception works as a string, too";
 
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => ['a', []]});
@@ -131,6 +131,7 @@ begins_with $x,
     "Bad option to Text::Printf constructor\ndelimiter values must be strings or regexes",
     "Wrong type delimiters (sx) exception works as a string, too";
 
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => [qr/a/, []]});
@@ -149,6 +150,7 @@ begins_with $x,
     "Bad option to Text::Printf constructor\ndelimiter values must be strings or regexes",
     "Wrong type delimiters (rx) exception works as a string, too";
 
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => [[], 'b']});
@@ -167,6 +169,7 @@ begins_with $x,
     "Bad option to Text::Printf constructor\ndelimiter values must be strings or regexes",
     "Wrong type delimiters (xs) exception works as a string, too";
 
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => [[], qr/b/]});
@@ -185,6 +188,7 @@ begins_with $x,
     "Bad option to Text::Printf constructor\ndelimiter values must be strings or regexes",
     "Wrong type delimiters (xr) exception works as a string, too";
 
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => [[], {}]});
@@ -204,8 +208,21 @@ begins_with $x,
     "Wrong type delimiters (xx) exception works as a string, too";
 
 
+#----------------------------------------------------------------
 # How about some non-exceptions, to brighten our day?
 
+#----------------------------------------------------------------
+
+eval
+{
+    $template = Text::Printf->new();
+};
+
+$x = $@;
+is $x, q{},   q{'new' is now allowed to have zero parameters};
+
+
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => ['a', 'b']});
@@ -213,13 +230,17 @@ eval
 
 is $@, q{},   q{Correct type delimiters (ss)};
 
+
+#----------------------------------------------------------------
 eval
 {
-    $template = Text::Printf->new(q{}, {delimiters => ['a', qr/b/]});
+    $template = Text::Printf->new({delimiters => ['a', 'b']});
 };
 
-is $@, q{},   q{Correct type delimiters (sr)};
+is $@, q{},   q{Correct type delimiters (ss) (only arg)};
 
+
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => [qr/a/, 'b']});
@@ -227,6 +248,8 @@ eval
 
 is $@, q{},   q{Correct type delimiters (rs)};
 
+
+#----------------------------------------------------------------
 eval
 {
     $template = Text::Printf->new(q{}, {delimiters => [qr/a/, qr/b/]});
